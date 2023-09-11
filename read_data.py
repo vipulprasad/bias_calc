@@ -43,10 +43,12 @@ def readdata(file_name, clms):
 def data_summary(data):
 
         bins = np.logspace(np.log10(min(data['N'])), np.log10(max(data['N'])), 100)
+        bin_mid = [(bins[i]+bins[i+1])/2 for i in range(len(bins)-1)]
         plt.figure(figsize = (8,8))
-        plt.hist(data['N'], bins = bins)
-        #plt.xscale("log")
-        #plt.yscale("log")
+        num, _ = np.histogram(data['N'], bins = bins)
+        plt.scatter(bin_mid, 34*num)
+        plt.xscale("log")
+        plt.yscale("log")
         plt.xlabel("M")
         plt.ylabel("Number of halos")
         plt.show()
@@ -57,7 +59,6 @@ def data_summary(data):
 
 def create_mass_slice(data, ml_cut, mu_cut):
 
-        open('file_names_7500.txt', 'w').close()
         outfile_file = open('file_names_7500.txt', 'a')
 
         if rand_sample != 0:
@@ -82,7 +83,7 @@ def create_mass_slice(data, ml_cut, mu_cut):
 
 #---------------------------------------------------------------------------
 
-def load_files():
+def load_files(mass_list):
         # To do -> Create seperate mass list
         halo_files = os.listdir(file_path)
         for file in halo_files:
@@ -90,21 +91,30 @@ def load_files():
                         halo_cat = readdata(file_path+file, ['N', 'SO_central_particle'])
                         halo_cat = halo_cat.sort_values('N')
                         halo_num = int(5e5) 
-                        indeces = [i * halo_num for i in range(int(len(halo_cat)//halo_num)+1)]+[-1]
-                        mass_list = halo_cat['N'].iloc[indeces].tolist()
+                        #indeces = [i * halo_num for i in range(int(len(halo_cat)//halo_num)+1)]+[-1]
+                        #mass_list = halo_cat['N'].iloc[indeces].tolist()
                         for i in range(len(mass_list)-1):
-                                create_mass_slice(halo_cat, mass_list[i], mass_list[i+1])
+                                print(create_mass_slice(halo_cat, mass_list[i], mass_list[i+1]))
+                        del halo_cat
 
-halo_cat = readdata('/home/vipul/vipul/halo_clutering/AbacusSummit_huge_c000_ph201/halos/z3.000/halo_info/halo_info_000.asdf', ['N', 'SO_central_particle']) # N = particle number
-#halo_cat = halo_cat.sort_values('N')
-'''
-halo_num = int(3e5) # number of halos in each mass bin
+
+halo_cat = readdata(file_path+'halo_info_000.asdf', ['N', 'SO_central_particle']) # N = particle number
+halo_cat = halo_cat.sort_values('N')
+#data_summary(halo_cat)
+halo_num = int(2e5) # number of halos in each mass bin
 indeces = [i * halo_num for i in range(int(len(halo_cat)//halo_num)+1)]+[-1]
-mass_list = halo_cat['N'].iloc[indeces]
-print(mass_list) #data_summary(halo_cat)
+mass_list = halo_cat['N'].iloc[indeces].tolist()
+#mass_list = np.logspace(np.log10(min(halo_cat['N'])), np.log10(max(halo_cat['N'])), 10)
+del halo_cat
+
+for mass in mass_list:
+        open('file_names_7500.txt', 'w').close()
+        print(format_e(mass)) #data_summary(halo_cat)
+
+load_files(mass_list)
 
 #for i in range(len(mass_list)-1):
 #       create_mass_slice(halo_cat, mass_list[i], mass_list[i+1])
         
 #m_bin_cat = create_mass_slice(halo_cat, 1e11, 5e11)
-'''
+
