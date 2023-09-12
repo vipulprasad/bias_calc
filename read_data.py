@@ -5,6 +5,9 @@ import scienceplots
 plt.style.use('science')
 import os
 
+max_halo_mass = 147886687132648.38
+min_halo_mass = 1993082036828.1453
+
 h = 1#0.674
 
 #part_mass = 3.131059264330557e+09*h
@@ -81,36 +84,30 @@ def create_mass_slice(data, ml_cut, mu_cut):
         data.to_csv(output_path+out_fname, sep = ',', mode = 'a', index = False, header = False)
         return len(data)
 
-#---------------------------------------------------------------------------
-
 def load_files(mass_list):
         # To do -> Create seperate mass list
         halo_files = os.listdir(file_path)
+        
         for file in halo_files:
                 if file[0:4] == 'halo':
+                        print(file)
                         halo_cat = readdata(file_path+file, ['N', 'SO_central_particle'])
-                        halo_cat = halo_cat.sort_values('N')
-                        halo_num = int(5e5) 
-                        #indeces = [i * halo_num for i in range(int(len(halo_cat)//halo_num)+1)]+[-1]
-                        #mass_list = halo_cat['N'].iloc[indeces].tolist()
+                        #halo_cat = halo_cat.sort_values('N')
+                        
                         for i in range(len(mass_list)-1):
                                 print(create_mass_slice(halo_cat, mass_list[i], mass_list[i+1]))
                         del halo_cat
 
+#---------------------------------------------------------------------------
 
-halo_cat = readdata(file_path+'halo_info_000.asdf', ['N', 'SO_central_particle']) # N = particle number
-halo_cat = halo_cat.sort_values('N')
-#data_summary(halo_cat)
-halo_num = int(2e5) # number of halos in each mass bin
-indeces = [i * halo_num for i in range(int(len(halo_cat)//halo_num)+1)]+[-1]
-mass_list = halo_cat['N'].iloc[indeces].tolist()
-#mass_list = np.logspace(np.log10(min(halo_cat['N'])), np.log10(max(halo_cat['N'])), 10)
-del halo_cat
+'''
+#for mass in mass_list:
+        #open('file_names_7500.txt', 'w').close()
+#        print(format_e(mass)) #data_summary(halo_cat)
+'''
 
-for mass in mass_list:
-        open('file_names_7500.txt', 'w').close()
-        print(format_e(mass)) #data_summary(halo_cat)
-
+#mass_list = [3e12, 4e12, 7e12, 12e12, 20e12, 40e12, 100e12]
+mass_list = [(3e12)*(3**i) for i in range(4)]+[max_halo_mass]
 load_files(mass_list)
 
 #for i in range(len(mass_list)-1):
