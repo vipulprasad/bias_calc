@@ -88,8 +88,9 @@ def load_files(mass_list):
         # To do -> Create seperate mass list
         halo_files = os.listdir(file_path)
         
-        for file in halo_files:
+        for file in halo_files[0:2]:
                 if file[0:4] == 'halo':
+                        open('file_names_7500.txt', 'w').close()
                         print(file)
                         halo_cat = readdata(file_path+file, ['N', 'SO_central_particle'])
                         #halo_cat = halo_cat.sort_values('N')
@@ -100,14 +101,8 @@ def load_files(mass_list):
 
 #---------------------------------------------------------------------------
 
-'''
-#for mass in mass_list:
-        #open('file_names_7500.txt', 'w').close()
-#        print(format_e(mass)) #data_summary(halo_cat)
-'''
-
-#mass_list = [3e12, 4e12, 7e12, 12e12, 20e12, 40e12, 100e12]
-mass_list = [(3e12)*(3**i) for i in range(4)]+[max_halo_mass]
+mass_list = [2e12, 2.2e12, 2.4e12, 2.6e12, 2.8e12, 3.2e12, 4e12, 6e12, 10e12, max_halo_mass]
+#mass_list = [(3e12)*(5**i) for i in range(3)]+[max_halo_mass]
 load_files(mass_list)
 
 #for i in range(len(mass_list)-1):

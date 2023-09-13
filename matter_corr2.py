@@ -20,6 +20,7 @@ radii = np.logspace(-2, 3, 100) #Mpc/h comoving
 
 
 def bias_calc(file):
+        file_names = open('bias_files_7500.txt', 'a')
         m1, m2 = file.split('_')[3], file.split('_')[4]
         data = np.loadtxt(input_path+file)
         #print(file)
@@ -32,6 +33,8 @@ def bias_calc(file):
         #bias_err = np.sqrt(data[:,2], matter_corr_func)
         bias_result = np.stack((distance, bias, bias_err), axis = 1)
         out_fname = "bias{}".format(file.split('M')[1])
+        file_names.write(out_fname+'\n')
+        file_names.close()
         print(out_fname)
         np.savetxt(output_path+out_fname, bias_result)
         #return bias, m1, m2
@@ -40,8 +43,9 @@ def bias_calc(file):
 #bias_val, ml, mu = bias_calc('2pnt_corr_M_8.01E+10_8.65E+10.txt')
 #bias_calc('2pnt_cross_corr_M_1.85E+11_2E+11_1.28E+11_1.38E+11.txt')
 
-file_names = open('2pnt_file_names.txt', 'r').readlines()
-redshit = 3.0
+file_names = open('2pnt_file_names_7500.txt', 'r').readlines()
+redshift = 3.0
+open('bias_files_7500.txt', 'w').close()
 
 for file in file_names:
         bias_calc(file.split('\n')[0])
