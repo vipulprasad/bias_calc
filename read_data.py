@@ -5,29 +5,9 @@ import scienceplots
 plt.style.use('science')
 import os
 
-max_halo_mass = 147886687132648.38
-min_halo_mass = 1993082036828.1453
-
-h = 1#0.674
-
-#part_mass = 3.131059264330557e+09*h
-#part_mass = 2.109081520453063e+09 #hmsun 500
-part_mass = 5.694520105223272e+10 #hmsun 7500
-box_size = 500 # hmpc
-#ml_cut = 2e11
-#mu_cut = 2.2e11
-rand_sample = 0 #int(1e5)
-output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/halo_cat/"
-
-
 def format_e(n):
     a = '%.2E' % n
     return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
-
-#---------------------Read data----------------------------------------#
-
-#file_path = "/home/vipul/vipul/halo_clutering/correlation_calc/z3.000/halo_info/halo_info_000.asdf"
-file_path = "/home/vipul/vipul/halo_clutering/AbacusSummit_huge_c000_ph201/halos/z3.000/halo_info/"
 
 def readdata(file_name, clms):
 
@@ -36,7 +16,7 @@ def readdata(file_name, clms):
         cat = CompaSOHaloCatalog(file_name,cleaned=False)
         data = cat.halos[clms]
         data['N'] = data['N'].astype('float')*part_mass
-        data['SO_central_particle'] += 3750 # correcting the box coordinates origin
+        data['SO_central_particle'] += (box_size/2) # correcting the box coordinates origin
         data['X'] =data['SO_central_particle'][:,0]
         data['Y'] =data['SO_central_particle'][:,1]
         data['Z'] =data['SO_central_particle'][:,2]
@@ -62,7 +42,7 @@ def data_summary(data):
 
 def create_mass_slice(data, ml_cut, mu_cut):
 
-        outfile_file = open('file_names_7500.txt', 'a')
+        outfile_file = open(massbin_filenames_file, 'a')
 
         if rand_sample != 0:
                 rand_index = np.random.randint(0, len(data), rand_sample)
@@ -86,27 +66,36 @@ def create_mass_slice(data, ml_cut, mu_cut):
 
 def load_files(mass_list):
         # To do -> Create seperate mass list
-        halo_files = os.listdir(file_path)
+        halo_files = os.listdir(input_path)
         
         for file in halo_files[0:2]:
                 if file[0:4] == 'halo':
-                        open('file_names_7500.txt', 'w').close()
+                        open(massbin_filenames_file, 'w').close()
                         print(file)
-                        halo_cat = readdata(file_path+file, ['N', 'SO_central_particle'])
-                        #halo_cat = halo_cat.sort_values('N')
+                        halo_cat = readdata(input_path+file, ['N', 'SO_central_particle'])
                         
                         for i in range(len(mass_list)-1):
                                 print(create_mass_slice(halo_cat, mass_list[i], mass_list[i+1]))
                         del halo_cat
 
-#---------------------------------------------------------------------------
+#---------------------------------------------------------------------------#
+
+massbin_filenames_file = 'file_names_7500.txt'
+max_halo_mass = 147886687132648.38
+min_halo_mass = 1993082036828.1453
+
+h = 1#0.674
+
+#part_mass = 3.131059264330557e+09*h
+#part_mass = 2.109081520453063e+09 #hmsun 500
+part_mass = 5.694520105223272e+10 #hmsun 7500
+box_size = 7500 # hmpc
+rand_sample = 0 #int(1e5)
+output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/halo_cat/" # path to mass binned halo catalogs
+input_path = "/home/vipul/vipul/halo_clutering/AbacusSummit_huge_c000_ph201/halos/z3.000/halo_info/" # path to halo catalog file directory
 
 mass_list = [2e12, 2.2e12, 2.4e12, 2.6e12, 2.8e12, 3.2e12, 4e12, 6e12, 10e12, max_halo_mass]
 #mass_list = [(3e12)*(5**i) for i in range(3)]+[max_halo_mass]
 load_files(mass_list)
 
-#for i in range(len(mass_list)-1):
-#       create_mass_slice(halo_cat, mass_list[i], mass_list[i+1])
-        
-#m_bin_cat = create_mass_slice(halo_cat, 1e11, 5e11)
 

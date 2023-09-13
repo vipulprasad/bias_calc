@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import scienceplots
 plt.style.use('science')
 
-input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/bias_files/"
-output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/plots/"
 
 def plot(file):
 
@@ -54,6 +52,9 @@ def compare(file1):
         plt.close()
 
 file_names = open('bias_files_7500.txt', 'r').readlines()
+
+input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/bias_files/"
+output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/plots/"
 
 for file_name in file_names:
         print(file_name)

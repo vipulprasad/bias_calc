@@ -5,9 +5,6 @@ from Corrfunc.utils import convert_3d_counts_to_cf
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
 
-input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/halo_cat/"
-output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/corr_files/"
-
 def format_e(n):
     a = '%.2E' % n
     return a.split('E')[0].rstrip('0').rstrip('.') + 'E' + a.split('E')[1]
@@ -16,14 +13,7 @@ def format_e(n):
 #--------------------------auto correlation calculations----------------------------------#
 nthreads = 4
 
-nbins = 20
-#bins = np.linspace(0.1, 20.0, nbins + 1) # note that +1 to nbins
-bins = np.logspace(-2, 1.5, nbins +1)
-bin_mid = (bins[0:-1] + bins[1:])/2
-sim_boxsize = 7500
-rand_N = int(1e6)
-
-def rand_npairs():
+def rand_npairs(rand_N, boxsize, bins):
         
         rand_X = np.random.uniform(0, boxsize, rand_N)
         rand_Y = np.random.uniform(0, boxsize, rand_N)
@@ -45,7 +35,7 @@ def calc_xi(file_names, autocorr):
 
         RR_counts = rand_npairs_2(rand_N, sim_boxsize, bins)
 
-        outfile_file = open('2pnt_file_names_7500.txt', 'a')
+        outfile_file = open(corr2pnt_filenames_file, 'a')
         
         if autocorr == 1: 
                 Ml, Mu = float(file_names[0].split('_')[2]), float(file_names[0].split('_')[3])
@@ -114,9 +104,22 @@ def plot(corr_2pnt):
 
 if __name__ == "__main__":
 
-        open("2pnt_file_names_7500.txt", "w").close()
+        massbin_filenames_file = 'file_names_7500.txt'
+        corr2pnt_filenames_file = "2pnt_file_names_7500.txt"
 
-        file_names = open('file_names_7500.txt', 'r').readlines()
+        nbins = 20
+        #bins = np.linspace(0.1, 20.0, nbins + 1) # note that +1 to nbins
+        bins = np.logspace(-2, 1.5, nbins +1)
+        bin_mid = (bins[0:-1] + bins[1:])/2
+        sim_boxsize = 7500
+        rand_N = int(1e6)
+
+        input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/halo_cat/"
+        output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/corr_files/"
+
+        open(corr2pnt_filenames_file, "w").close()
+
+        file_names = open(massbin_filenames_file, 'r').readlines()
         file_names = [file.split('\n')[0] for file in file_names]
         cross_corr_input_arg = []
 

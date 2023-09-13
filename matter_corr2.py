@@ -2,25 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from colossus.cosmology import cosmology
 
-input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/corr_files/"
-output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/bias_files/"
-
-
 def matter_corr(distance, z):
 
         cosmo = cosmology.setCosmology('planck18')
         xi_mm = cosmo.correlationFunction(distance, z = z)
         return xi_mm
 
-
-radii = np.logspace(-2, 3, 100) #Mpc/h comoving
-#Assume that k and P come from somewhere, e.g. CAMB or CLASS
-#xi_mm = xi.xi_mm_at_r(radii, kh, pk) 
-
-
-
 def bias_calc(file):
-        file_names = open('bias_files_7500.txt', 'a')
+        file_names = open(bias_filenames_file, 'a')
         m1, m2 = file.split('_')[3], file.split('_')[4]
         data = np.loadtxt(input_path+file)
         #print(file)
@@ -38,14 +27,19 @@ def bias_calc(file):
         print(out_fname)
         np.savetxt(output_path+out_fname, bias_result)
         #return bias, m1, m2
+#------------------------------------------------------------------#
 
-#bias_calc('2pnt_corr_M_8.01E+10_8.65E+10.txt')
-#bias_val, ml, mu = bias_calc('2pnt_corr_M_8.01E+10_8.65E+10.txt')
-#bias_calc('2pnt_cross_corr_M_1.85E+11_2E+11_1.28E+11_1.38E+11.txt')
+input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/corr_files/"
+output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/bias_files/"
 
-file_names = open('2pnt_file_names_7500.txt', 'r').readlines()
+corr2pnt_filenames_file = "2pnt_file_names_7500.txt"
+bias_filenames_file = 'bias_files_7500.txt'
+
+corr2pnt_filenames = open(corr2pnt_filenames_file, 'r').readlines()
+radii = np.logspace(-2, 3, 100) #Mpc/h comoving
 redshift = 3.0
-open('bias_files_7500.txt', 'w').close()
 
-for file in file_names:
-        bias_calc(file.split('\n')[0])
+open(bias_filenames_file, 'w').close()
+
+for filename in corr2pnt_filenames:
+        bias_calc(filename.split('\n')[0])
