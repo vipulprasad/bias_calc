@@ -102,21 +102,51 @@ def plot(corr_2pnt):
         plt.ylabel(r'$\xi_{hh}(r)$')
         plt.show()
 
+def abacus_cosmo_calc():
+
+        halo_files = ['halos_mcut_1E+12_1.5E+12_.txt', 'halos_mcut_2E+12_3E+13_.txt', 'halos_mcut_3E+13_2E+15_.txt']
+
+        for file1 in halo_files:
+                for file2 in halo_files:
+                        calc_xi([file1, file2], autocorr =0)
+
+def abaus_summit_calc():
+
+        #open(corr2pnt_filenames_file, "w").close()
+        #file_names = open(massbin_filenames_file, 'r').readlines()
+        #file_names = [file.split('\n')[0] for file in file_names]
+
+        file_names = []
+        cross_corr_input_arg = []
+
+        for file1 in file_names:
+            for file2 in file_names:
+                cross_corr_input_arg.append(([file1, file2], 0))
+
+        with Pool(3) as P:
+                P.starmap(calc_xi, cross_corr_input_arg)        
+
+
 if __name__ == "__main__":
 
-        massbin_filenames_file = 'file_names_7500.txt'
-        corr2pnt_filenames_file = "2pnt_file_names_7500.txt"
+        massbin_filenames_file = 'file_names_cosmos_z3.txt'
+        corr2pnt_filenames_file = "2pnt_file_names_cosmo_z3.txt"
 
         nbins = 20
         #bins = np.linspace(0.1, 20.0, nbins + 1) # note that +1 to nbins
-        bins = np.logspace(-2, 1.5, nbins +1)
+        bins = np.logspace(-1, 1.5, nbins +1)
         bin_mid = (bins[0:-1] + bins[1:])/2
-        sim_boxsize = 7500
+        sim_boxsize = 1100
         rand_N = int(1e6)
 
-        input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/halo_cat/"
-        output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/corr_files/"
+        #input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/halo_cat/"
+        #output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/corr_files/"
 
+        input_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
+        output_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
+        abacus_cosmo_calc()
+
+'''
         open(corr2pnt_filenames_file, "w").close()
 
         file_names = open(massbin_filenames_file, 'r').readlines()
@@ -129,5 +159,6 @@ if __name__ == "__main__":
 
         with Pool(3) as P:
                 P.starmap(calc_xi, cross_corr_input_arg)
-
-
+'''
+        
+        

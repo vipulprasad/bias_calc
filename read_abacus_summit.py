@@ -91,8 +91,8 @@ h = 1#0.674
 part_mass = 5.694520105223272e+10 #hmsun 7500
 box_size = 7500 # hmpc
 rand_sample = 0 #int(1e5)
-output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/halo_cat/" # path to mass binned halo catalogs
-input_path = "/home/vipul/vipul/halo_clutering/AbacusSummit_huge_c000_ph201/halos/z3.000/halo_info/" # path to halo catalog file directory
+output_path = "/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/" # path to mass binned halo catalogs
+input_path = "/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/" # path to halo catalog file directory
 
 mass_list = [2e12, 2.2e12, 2.4e12, 2.6e12, 2.8e12, 3.2e12, 4e12, 6e12, 10e12, max_halo_mass]
 #mass_list = [(3e12)*(5**i) for i in range(3)]+[max_halo_mass]

@@ -10,6 +10,7 @@ position is given as -550 to +550 Mpc
 
 import numpy as np
 import random
+import pandas as pd
 
 #halo mass is provided as number of particles
 particle_mass_real = 5.776643562630781e+10 #Msun
@@ -53,7 +54,6 @@ def read_file(filename, rand = 1):
 		    for i in index:
 			    random_data.append(data[i])
 		    data = random_data
-            del random_data#just to clear the variable save ram
 
 		mass = []
 		pos = []
@@ -63,35 +63,28 @@ def read_file(filename, rand = 1):
 			pos.append(data[i][1]+550) # +550 is to make the box coordinates between 0 and 1100Mpc
 		
 		del data
-		return np.column_stack((mass, pos))	
+		return pd.DataFrame(np.column_stack((mass, pos)), columns = ['M', 'X', 'Y', 'Z'])	
 
 def create_mass_slice(data, ml_cut, mu_cut):
 
-        outfile_file = open(massbin_filenames_file, 'a')
+        out_fname = "halos_mcut_{}_{}_.txt".format(format_e(ml_cut), format_e(mu_cut))
+        print(out_fname)
 
-        if rand_sample != 0:
-                rand_index = np.random.randint(0, len(data), rand_sample)
-                data = data[rand_index]
-                out_fname = "halos_mcut_{}_{}_{}_sample.txt".format(format_e(ml_cut), format_e(mu_cut), format_e(rand_sample))
-                outfile_file.write(out_fname+'\n')
-                print(out_fname)
-        else:
-                out_fname = "halos_mcut_{}_{}_.txt".format(format_e(ml_cut), format_e(mu_cut))
-                outfile_file.write(out_fname+'\n')
-                print(out_fname)
-
-        outfile_file.close()
-
-        data = data[(data['N'] > ml_cut) & (data['N'] <= mu_cut)]
+        data = data[(data['M'] > ml_cut) & (data['M'] <= mu_cut)]
 
         print(len(data))
 
         data.to_csv(output_path+out_fname, sep = ',', mode = 'a', index = False, header = False)
-        return len(data)
+        print(len(data))
 
-halo_cat = [read_file('halos_{}'.format(i)) for i in range(4)]	
-		
-np.savetxt("halos.txt", np.concatenate((halo_cat[0], halo_cat[1], halo_cat[2], halo_cat[3])))
+input_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
+output_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
+mass_bins = [1e12, 1.5e12, 2e12, 3e13, 2e15]
 
-
+for i in range(4):
+	file_name = input_path+'halos_{}'.format(i)
+	halo_cat = read_file(file_name)
+	create_mass_slice(halo_cat, 1e12, 1.5e12)
+	create_mass_slice(halo_cat, 2e12, 3e13)
+	create_mass_slice(halo_cat, 3e13, 2e15)
 
