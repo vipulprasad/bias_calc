@@ -48,12 +48,12 @@ def read_file(filename, rand = 1):
 		data = data[["N","pos"]]#N is the number of particles in a halos 
 		
 		if rand != 1:#ramodom sampling
-		    random_data = []
-		    N = len(data)
-		    index = random.sample(range(N), int(rand*N)) # 0.1 gives 10% data
-		    for i in index:
-			    random_data.append(data[i])
-		    data = random_data
+			random_data = []
+			N = len(data)
+			index = random.sample(range(N), int(rand*N)) # 0.1 gives 10% data
+			for i in index:
+				random_data.append(data[i])
+			data = random_data
 
 		mass = []
 		pos = []
@@ -67,7 +67,7 @@ def read_file(filename, rand = 1):
 
 def create_mass_slice(data, ml_cut, mu_cut):
 
-        out_fname = "halos_mcut_{}_{}_.txt".format(format_e(ml_cut), format_e(mu_cut))
+        out_fname = "halos_mcut_{}-{}_.txt".format(format_e(ml_cut), format_e(mu_cut))
         print(out_fname)
 
         data = data[(data['M'] > ml_cut) & (data['M'] <= mu_cut)]
@@ -77,8 +77,10 @@ def create_mass_slice(data, ml_cut, mu_cut):
         data.to_csv(output_path+out_fname, sep = ',', mode = 'a', index = False, header = False)
         print(len(data))
 
-input_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
-output_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
+
+
+input_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
+output_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
 mass_bins = [1e12, 1.5e12, 2e12, 3e13, 2e15]
 
 for i in range(4):

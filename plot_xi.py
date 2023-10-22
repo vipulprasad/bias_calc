@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt 
+import argparse
 
 
 def plot_ratio(mbin1, mbin2):
 
-        file11 = '2pnt_cross_corr_M_{}_{}.txt'.format(mbin1, mbin1)
-        file22 = '2pnt_cross_corr_M_{}_{}.txt'.format(mbin2, mbin2)
-        file12 = '2pnt_cross_corr_M_{}_{}.txt'.format(mbin1, mbin2)
+        file11 = '2pnt_cross_corr_M_{}_{}_.txt'.format(mbin1, mbin1)
+        file22 = '2pnt_cross_corr_M_{}_{}_.txt'.format(mbin2, mbin2)
+        file12 = '2pnt_cross_corr_M_{}_{}_.txt'.format(mbin1, mbin2)
 
         print(file11+'\n', file22+'\n', file12+'\n')
 
@@ -31,17 +32,46 @@ def plot_ratio(mbin1, mbin2):
         #plt.errorbar(distance, corr_2pnt, yerr = corr_2pnt[:,2])
         plt.xscale('log')
         #plt.yscale('log')
-        plt.ylim((0.8, 1.2))
-        plt.xlim((0, 50))
+        #plt.ylim((0.8, 1.2))
+        #plt.xlim((0, 50))
         plt.xlabel('r')
         plt.ylabel(r'$\frac{\sqrt{\xi_{hh}(M1)\xi_{hh}(M2)}}{\xi_{hh}(M1,M2)}$')
         plt.savefig(output_path+'corr_ratio_{}_{}_.png'.format(mbin1, mbin2))
         plt.show()
 
-input_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
-output_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
+parser = argparse.ArgumentParser()
+parser.add_argument('z', type = float, help = 'redshift')
+args = parser.parse_args()
 
-bin1 = '1E+12_1.5E+12'
-bin2 = '2E+12_3E+13' 
+redshift = args.z
 
-plot_ratio(bin1, bin2)
+if redshift in [0.3, 0.5]:
+        input_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z{}00/corr_files/'.format(redshift)
+        output_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z{}00/ratio_plots/'.format(redshift)
+        sim_boxsize = 1100.0
+
+if redshift in [3.0, 4.0]:
+        input_path = 'abacus_summit/box7500/z{}/corr_files/'.format(redshift)
+        output_path = 'abacus_summit/box7500/z{}/ratio_plots/'.format(redshift)
+        sim_boxsize = 7500.0
+
+massbin_filenames_file = 'massbin_z{}.txt'.format(redshift)
+
+file_names = open(massbin_filenames_file, 'r').readlines()
+file_names = [file.split('\n')[0] for file in file_names]
+
+m_bins = []
+
+print("\n")
+
+for i, file_name in enumerate(file_names):
+        print("({}) - {}".format(i, file_name))
+        m_bins.append(file_name.split('_')[2])
+
+mbin1 = m_bins[int(input("\nSelect first mass bin\n"))]
+mbin2 = m_bins[int(input("\nSelect second mass bin\n"))]
+
+print("First mass_bin - {}".format(mbin1))
+print("Second mass_bin - {}".format(mbin2))
+
+plot_ratio(mbin1, mbin2)

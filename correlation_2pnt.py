@@ -4,6 +4,7 @@ from Corrfunc.theory.DD import DD
 from Corrfunc.utils import convert_3d_counts_to_cf
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
+import argparse
 
 def format_e(n):
     a = '%.2E' % n
@@ -31,14 +32,12 @@ def rand_npairs_2(N, boxsize, bins):
             pair_counts.append(N*(N-1)*(4/3)*np.pi*(bins[i+1]**3 - bins[i]**3)/volume)
         return np.array(pair_counts)
 
-def calc_xi(file_names, autocorr):
+def calc_xi(file_names, autocorr, bins):
 
         RR_counts = rand_npairs_2(rand_N, sim_boxsize, bins)
-
-        outfile_file = open(corr2pnt_filenames_file, 'a')
         
         if autocorr == 1: 
-                Ml, Mu = float(file_names[0].split('_')[2]), float(file_names[0].split('_')[3])
+                mbin1 = file_names[0].split('_')[2]
                 print("mass bin edge = {} - {}".format(Ml, Mu))
                 
                 data = pd.read_csv(input_path+file_names[0], names = ["M", "X", "Y", "Z"])
@@ -51,18 +50,20 @@ def calc_xi(file_names, autocorr):
 
                 auto_DD_counts = DD(autocorr, nthreads, bins, data_X, data_Y, data_Z, periodic = True, boxsize = sim_boxsize, verbose = True)
                 del data, data_X, data_Y, data_Z
+
                 auto_corr_2pnt = (auto_DD_counts['npairs']/((f**2)*RR_counts))-1
                 #auto_corr_2pnt = (auto_DD_counts['npairs']/((f**2)*RR_counts['npairs']))-1
                 auto_corr_2pnt_err = np.sqrt(auto_DD_counts['npairs'])/((f**2)*RR_counts)
                 #auto_corr_2pnt_err = np.sqrt(auto_DD_counts['npairs'])/((f**2)*RR_counts['npairs'])
-                auto_corr_2pnt = np.stack((bin_mid, auto_corr_2pnt, auto_corr_2pnt_err), axis = 1)
-                out_fname = "2pnt_corr_M_{}_{}.txt".format(format_e(Ml), format_e(Mu))
-                outfile_file.write(out_fname+'\n')
+                auto_corr_2pnt = np.stack((r_bin_mid, auto_corr_2pnt, auto_corr_2pnt_err), axis = 1)
+
+                out_fname = "2pnt_corr_M_{}_.txt".format(format_e(mbin1))
                 np.savetxt(output_path+out_fname, auto_corr_2pnt)
+
                 return auto_corr_2pnt
 
         if autocorr == 0:
-                Ml1, Mu1, Ml2, Mu2 = float(file_names[0].split('_')[2]), float(file_names[0].split('_')[3]), float(file_names[1].split('_')[2]), float(file_names[1].split('_')[3])
+                mbin1, mbin2 = file_names[0].split('_')[2], file_names[1].split('_')[2]
                 
                 data1 = pd.read_csv(input_path+file_names[0], names = ["M", "X", "Y", "Z"])
                 data2 = pd.read_csv(input_path+file_names[1], names = ["M", "X", "Y", "Z"])
@@ -77,17 +78,17 @@ def calc_xi(file_names, autocorr):
 
                 auto_DD_counts = DD(autocorr, nthreads, bins, data_X1, data_Y1, data_Z1, X2 = data_X2, Y2 = data_Y2, Z2 = data_Z2, periodic = True, boxsize = sim_boxsize, verbose = True)
                 del data1, data2, data_X1, data_Y1, data_Z1, data_X2, data_Y2, data_Z2
+
                 #cross_corr_2pnt = (auto_DD_counts['npairs']/((f)*RR_counts['npairs']))-1
                 #cross_corr_2pnt_err = np.sqrt(auto_DD_counts['npairs'])/(f*RR_counts['npairs'])
                 cross_corr_2pnt = (auto_DD_counts['npairs']/((f)*RR_counts))-1
                 cross_corr_2pnt_err = np.sqrt(auto_DD_counts['npairs'])/(f*RR_counts)
-                cross_corr_2pnt = np.stack((bin_mid, cross_corr_2pnt, cross_corr_2pnt_err), axis = 1)
-                out_fname = "2pnt_cross_corr_M_{}_{}_{}_{}.txt".format(format_e(Ml1), format_e(Mu1), format_e(Ml2), format_e(Mu2))
-                outfile_file.write(out_fname+'\n')
+                cross_corr_2pnt = np.stack((r_bin_mid, cross_corr_2pnt, cross_corr_2pnt_err), axis = 1)
+
+                out_fname = "2pnt_cross_corr_M_{}_{}_.txt".format(mbin1, mbin2)
                 print(out_fname)
                 np.savetxt(output_path+out_fname, cross_corr_2pnt)
                 return cross_corr_2pnt
-        outfile_file.close()
                 
 
 #------Matter correlation----------------- 
@@ -102,21 +103,18 @@ def plot(corr_2pnt):
         plt.ylabel(r'$\xi_{hh}(r)$')
         plt.show()
 
-def abacus_cosmo_calc():
+def do_calc_xi(file_names):
 
-        halo_files = ['halos_mcut_1E+12_1.5E+12_.txt', 'halos_mcut_2E+12_3E+13_.txt', 'halos_mcut_3E+13_2E+15_.txt']
+        for file1 in file_names:
+                for file2 in file_names:
+                        calc_xi([file1, file2], autocorr =0, bins = r_bins)
 
-        for file1 in halo_files:
-                for file2 in halo_files:
-                        calc_xi([file1, file2], autocorr =0)
-
-def abaus_summit_calc():
+def do_calc_xi_pool(file_names):
 
         #open(corr2pnt_filenames_file, "w").close()
         #file_names = open(massbin_filenames_file, 'r').readlines()
         #file_names = [file.split('\n')[0] for file in file_names]
 
-        file_names = []
         cross_corr_input_arg = []
 
         for file1 in file_names:
@@ -129,36 +127,32 @@ def abaus_summit_calc():
 
 if __name__ == "__main__":
 
-        massbin_filenames_file = 'file_names_cosmos_z3.txt'
-        corr2pnt_filenames_file = "2pnt_file_names_cosmo_z3.txt"
+        parser = argparse.ArgumentParser()
+        parser.add_argument('z', type = float, help = 'redshift')
+        args = parser.parse_args()
 
-        nbins = 20
-        #bins = np.linspace(0.1, 20.0, nbins + 1) # note that +1 to nbins
-        bins = np.logspace(-1, 1.5, nbins +1)
-        bin_mid = (bins[0:-1] + bins[1:])/2
-        sim_boxsize = 1100
-        rand_N = int(1e6)
+        redshift = args.z
 
-        #input_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/halo_cat/"
-        #output_path = "/home/vipul/vipul/halo_clutering/bias_calc/box7500/z3.0/corr_files/"
+        if redshift in [0.3, 0.5]:
+                input_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z{}00/'.format(redshift)
+                output_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z{}00/corr_files/'.format(redshift)
+                sim_boxsize = 1100.0
 
-        input_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
-        output_path = '/home/vipul/vipul/halo_clutering/bias_calc/abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
-        abacus_cosmo_calc()
+        if redshift in [3.0, 4.0]:
+                input_path = 'abacus_summit/box7500/z{}/halo_cat/'.format(redshift)
+                output_path = 'abacus_summit/box7500/z{}/corr_files/'.format(redshift)
+                sim_boxsize = 7500.0
 
-'''
-        open(corr2pnt_filenames_file, "w").close()
+        massbin_filenames_file = 'massbin_z{}.txt'.format(redshift)
 
         file_names = open(massbin_filenames_file, 'r').readlines()
         file_names = [file.split('\n')[0] for file in file_names]
-        cross_corr_input_arg = []
 
-        for file1 in file_names:
-            for file2 in file_names:
-                cross_corr_input_arg.append(([file1, file2], 0))
+        rand_N = int(1e6)
+        nbins = 20
+        r_bins = np.logspace(-1, 1.5, nbins +1)
+        r_bin_mid = (r_bins[0:-1] + r_bins[1:])/2
 
-        with Pool(3) as P:
-                P.starmap(calc_xi, cross_corr_input_arg)
-'''
-        
-        
+        do_calc_xi(file_names)
+
+
