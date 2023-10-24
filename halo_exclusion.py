@@ -3,7 +3,8 @@ from math import pi, pow
 
 delta = 200
 
-halo_mass = 147886687132648.38 # mass of smallest halo solar mass
+halo_mass = 147886687132648.38 # mass of smallest halo solar mass 1.1127327321765554 MPc
+#halo_mass = 2571446556156185.5 # z = 0.3 2.8827501554159545 MPc
 
 omega_m = 0.301685                  # Matter(baryons+dark matter) density parameter.
 Mpc = 3.0857e22                     # 1 Mpc in metres.

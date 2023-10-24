@@ -47,11 +47,11 @@ def create_mass_slice(data, ml_cut, mu_cut):
         if rand_sample != 0:
                 rand_index = np.random.randint(0, len(data), rand_sample)
                 data = data[rand_index]
-                out_fname = "halos_mcut_{}_{}_{}_sample.txt".format(format_e(ml_cut), format_e(mu_cut), format_e(rand_sample))
+                out_fname = "halos_mcut_{}-{}_{}_sample.txt".format(format_e(ml_cut), format_e(mu_cut), format_e(rand_sample))
                 outfile_file.write(out_fname+'\n')
                 print(out_fname)
         else:
-                out_fname = "halos_mcut_{}_{}_.txt".format(format_e(ml_cut), format_e(mu_cut))
+                out_fname = "halos_mcut_{}-{}_.txt".format(format_e(ml_cut), format_e(mu_cut))
                 outfile_file.write(out_fname+'\n')
                 print(out_fname)
 
@@ -96,6 +96,6 @@ input_path = "/home/vipul/vipul/halo_clutering/AbacusSummit_huge_c000_ph201/halo
 
 mass_list = [2e12, 2.2e12, 2.4e12, 2.6e12, 2.8e12, 3.2e12, 4e12, 6e12, 10e12, max_halo_mass]
 #mass_list = [(3e12)*(5**i) for i in range(3)]+[max_halo_mass]
-load_files(mass_list)
+#load_files(mass_list)
 
 

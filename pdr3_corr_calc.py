@@ -51,11 +51,12 @@ frac = len(data)/len(data_rand)
 rbins = np.linspace(0, 2, 21)
 bin_mid = (rbins[1:] +rbins[0:-1])/2
 RR_theta_pairs = rand_theta_pairs(data_rand, rbins)
-corr_mag_bin1, corr_mag_bin1_err = calc_w_theta(1, [mag_bin1], rbins, RR_theta_pairs['npairs'])
+corr_mag_bin1, corr_mag_bin1_err = calc_w_theta(0, [mag_bin1, mag_bin2], rbins, RR_theta_pairs['npairs'])
 
 #plt.scatter(data_rand['ra'], data_rand['dec'], s = 2)
 #plt.savefig('pdr3_spring_crop_rand.png')
 
 plt.errorbar(bin_mid, corr_mag_bin1, yerr = corr_mag_bin1_err, fmt = '.')
 #plt.yscale('log')
+plt.xscale('log')
 plt.show()

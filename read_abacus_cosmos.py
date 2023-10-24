@@ -83,10 +83,13 @@ input_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
 output_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/'
 mass_bins = [1e12, 1.5e12, 2e12, 3e13, 2e15]
 
+halo_max_mass = []
 for i in range(4):
 	file_name = input_path+'halos_{}'.format(i)
 	halo_cat = read_file(file_name)
-	create_mass_slice(halo_cat, 1e12, 1.5e12)
-	create_mass_slice(halo_cat, 2e12, 3e13)
-	create_mass_slice(halo_cat, 3e13, 2e15)
+	halo_max_mass.append(max(halo_cat['M']))
+	# create_mass_slice(halo_cat, 1e12, 1.5e12)
+	# create_mass_slice(halo_cat, 2e12, 3e13)
+	# create_mass_slice(halo_cat, 3e13, 2e15)
 
+print(max(halo_max_mass))

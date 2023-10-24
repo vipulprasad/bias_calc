@@ -5,6 +5,7 @@ from Corrfunc.utils import convert_3d_counts_to_cf
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
 import argparse
+nthreads = 4
 
 def format_e(n):
     a = '%.2E' % n
@@ -12,7 +13,6 @@ def format_e(n):
 
 
 #--------------------------auto correlation calculations----------------------------------#
-nthreads = 4
 
 def rand_npairs(rand_N, boxsize, bins):
         
@@ -93,21 +93,11 @@ def calc_xi(file_names, autocorr, bins):
 
 #------Matter correlation----------------- 
 
-
-def plot(corr_2pnt):
-        plt.scatter(bin_mid, corr_2pnt[:,1], s = 8)#, yerr = corr_2pnt[:,2])
-        plt.errorbar(bin_mid, corr_2pnt[:,1], yerr = corr_2pnt[:,2])
-        plt.xscale('log')
-        plt.yscale('log')
-        plt.xlabel('r')
-        plt.ylabel(r'$\xi_{hh}(r)$')
-        plt.show()
-
 def do_calc_xi(file_names):
 
-        for file1 in file_names:
-                for file2 in file_names:
-                        calc_xi([file1, file2], autocorr =0, bins = r_bins)
+        for i in range(len(file_names)):
+                for j in range(len(file_names[i:])):
+                        calc_xi([file_names[i], file_names[i:][j]], autocorr =0, bins = r_bins)
 
 def do_calc_xi_pool(file_names):
 
@@ -117,9 +107,9 @@ def do_calc_xi_pool(file_names):
 
         cross_corr_input_arg = []
 
-        for file1 in file_names:
-            for file2 in file_names:
-                cross_corr_input_arg.append(([file1, file2], 0))
+        for i in range(len(file_names)):
+                for j in range(len(file_names[i:])):
+                        cross_corr_input_arg.append(([file_names[i], file_names[i:][j]], 0))
 
         with Pool(3) as P:
                 P.starmap(calc_xi, cross_corr_input_arg)        
@@ -137,20 +127,24 @@ if __name__ == "__main__":
                 input_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z{}00/'.format(redshift)
                 output_path = 'abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z{}00/corr_files/'.format(redshift)
                 sim_boxsize = 1100.0
+                exclsn = 2.8827501554159545
 
         if redshift in [3.0, 4.0]:
                 input_path = 'abacus_summit/box7500/z{}/halo_cat/'.format(redshift)
                 output_path = 'abacus_summit/box7500/z{}/corr_files/'.format(redshift)
                 sim_boxsize = 7500.0
+                exclsn = 1.1127327321765554 #halo exclusion scale in MPc
 
         massbin_filenames_file = 'massbin_z{}.txt'.format(redshift)
 
         file_names = open(massbin_filenames_file, 'r').readlines()
         file_names = [file.split('\n')[0] for file in file_names]
 
+        exclsn = 1.1127327321765554 #halo exclusion scale in MPc
+
         rand_N = int(1e6)
         nbins = 20
-        r_bins = np.logspace(-1, 1.5, nbins +1)
+        r_bins = np.logspace(np.log10(exclsn), 1.5, nbins +1)
         r_bin_mid = (r_bins[0:-1] + r_bins[1:])/2
 
         do_calc_xi(file_names)
