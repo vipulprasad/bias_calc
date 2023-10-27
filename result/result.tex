@@ -1,0 +1,44 @@
+\documentclass[12pt]{article}
+%\usepackage{sectsty}
+%\sectionfont{\large}
+%\subsectionfont{\Small}
+\usepackage{amsmath}
+
+\usepackage{hyperref}
+%\hypersetup{
+	%	colorlinks=true,
+	%	linkcolor=blue,
+	%	filecolor=magenta,      
+	%	urlcolor=blue,
+	%}
+\usepackage[top=1.0in, left=1.0in, right=1.0in, bottom=1.0in]{geometry}
+%\usepackage{setspace}
+%\setstretch{1.1}
+%\pagestyle{empty}
+\usepackage{graphicx}
+\graphicspath{ {/home/vipul/bias_calc/} }
+%\usepackage{subfig}
+\usepackage{caption}
+\usepackage{subcaption}
+\title{Two-point correlation function comparison}
+
+\begin{document}
+	\maketitle
+
+Halo exclusion effect scale = $1.1127$ MPc for z = 3.0 halos\\
+Halo exclusion effect scale = $2.8827$ MPc for z = 0.3 halos\\
+
+\begin{equation}
+	\label{ratio}
+	 \frac{\sqrt{\xi_{hh}(M1)\xi_{hh}(M2)}}{\xi_{hh}(M1,M2)}
+\end{equation}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/ratio_plots/corr_ratio_1E+12-1.5E+12_3E+13-2E+15_.png}
+	\caption{Redshift 0.3}
+	\label{fig:ratio}
+\end{figure}
+
+\end{document}
+
