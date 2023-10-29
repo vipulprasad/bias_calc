@@ -16,5 +16,10 @@ rho_crit = (3*(H_o)**2)/(8*pi*G)*(Mpc**3/sm) # critical density of the universe.
 rho_bar = omega_m*rho_crit          # comoving background density in kg/m^3.
 
 
-scale = pow((3*halo_mass)/(4*pi*delta*rho_crit), 1/3)
-print("Halo exclusion scale = {} MPc".format(scale))
+def calc_exclusion(halo_mass):
+        scale = pow((3*halo_mass)/(4*pi*delta*rho_crit), 1/3)
+
+        if __name__ == "__main__":
+                print("Halo exclusion scale = {} MPc".format(scale))
+
+        return scale
