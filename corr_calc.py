@@ -52,16 +52,17 @@ def rand_npairs_2(N, boxsize, bins): # theoretical calculation or random-random 
 def calc_xi(file_name1, file_name2):
 
         mbin1, mbin2 = file_name1.split('_')[2], file_name2.split('_')[2]
+        exclusion = halo_vir_rad(float(mbin1.split('-')[1])) + halo_vir_rad(float(mbin2.split('-')[1]))
 
         rand_N = int(1e6)
         nbins = 20
-        r_bins = np.logspace(-1, 1.5, nbins +1)
+        r_bins = np.logspace(np.log10(exclusion), 1.5, nbins +1)
         r_bin_mid = (r_bins[0:-1] + r_bins[1:])/2
 
         RR_counts = rand_npairs_2(rand_N, sim_boxsize, r_bins)
         
-        data1 = pd.read_csv(input_path+file_names[0], names = ["M", "X", "Y", "Z"])
-        data2 = pd.read_csv(input_path+file_names[1], names = ["M", "X", "Y", "Z"])
+        data1 = pd.read_csv(input_path+file_name1, names = ["M", "X", "Y", "Z"])
+        data2 = pd.read_csv(input_path+file_name2, names = ["M", "X", "Y", "Z"])
         f = len(data1)*len(data2)/rand_N**2
 
         data_X1 = data1['X']
@@ -98,17 +99,17 @@ def calc_ratio(mbin1, mbin2):
 
         print(file11+'\n', file22+'\n', file12+'\n')
 
-        data11 = np.loadtxt(input_path+file11)
+        data11 = np.loadtxt(output_path_corr+file11)
         distance11 = data11[:,0]
         corr_2pnt11 = data11[:,1]
         corr_2pnt_err11 = data11[:,2]
 
-        data22 = np.loadtxt(input_path+file22)
+        data22 = np.loadtxt(output_path_corr+file22)
         distance22 = data22[:,0]
         corr_2pnt22 = data22[:,1]
         corr_2pnt_err22 = data22[:,2]
 
-        data12 = np.loadtxt(input_path+file12)
+        data12 = np.loadtxt(output_path_corr+file12)
         distance12 = data12[:,0]
         corr_2pnt12 = data12[:,1]
         corr_2pnt_err12 = data12[:,2]
@@ -119,16 +120,17 @@ def calc_ratio(mbin1, mbin2):
 
         plt.figure(figsize=(10, 6))
         plt.title('Mass bins: {}, {}, z = {}'.format(mbin1, mbin2, redshift), fontsize = 20)
-        plt.plot([0.1, 50], [1., 1.],'--',color='orange')
-        plt.vlines(exclusion, -2,max(ratio)+1.0 , color = 'black', linestyles=':', label = 'halo exclusion scale= {exclusion} MPc')
+        plt.plot([0.01, 70], [1., 1.],'--',color='orange')
+        plt.vlines(exclusion, min(ratio)-1.0,max(ratio)+1.0 , color = 'black', linestyles=':', label = 'halo exclusion scale= {:.2f} MPc'.format(exclusion))
         #plt.scatter(distance11, ratio, s = 16)#, yerr = corr_2pnt[:,2])
         plt.errorbar(distance11, ratio, yerr = ratio_err, fmt = '.')
         plt.xscale('log')
         #plt.yscale('log')
-        plt.ylim((0.6, max(ratio)+0.5))
-        plt.xlim((exclusion-0.5, 50))
+        #plt.ylim((0.6, max(ratio)+0.5))
+        plt.xlim((0.1, 50))
         plt.xlabel('r', fontsize = 18)
         plt.ylabel(r'$\frac{\sqrt{\xi_{hh}(M1)\xi_{hh}(M2)}}{\xi_{hh}(M1,M2)}$', fontsize = 18)
+        plt.legend()
         print(output_path_ratio+'corr_ratio_{}_{}_.png'.format(mbin1, mbin2))
         plt.savefig(output_path_ratio+'corr_ratio_{}_{}_.png'.format(mbin1, mbin2), format="png")
         plt.close()
@@ -195,11 +197,7 @@ if __name__ == "__main__":
                 #print("({}) - {}".format(i, file_name))
                 m_bins.append(file_name.split('_')[2])
 
-        # rand_N = int(1e6)
-        # nbins = 20
-        # r_bins = np.logspace(np.log10(exclsn), 1.5, nbins +1)
-        # r_bin_mid = (r_bins[0:-1] + r_bins[1:])/2
-
         do_calc_xi(file_names)
+        do_plot_all(m_bins)
 
 

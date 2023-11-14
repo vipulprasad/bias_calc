@@ -3,15 +3,16 @@
 %\sectionfont{\large}
 %\subsectionfont{\Small}
 \usepackage{amsmath}
-
+\usepackage{subcaption}
 \usepackage{hyperref}
+\usepackage{multicol}
 %\hypersetup{
 	%	colorlinks=true,
 	%	linkcolor=blue,
 	%	filecolor=magenta,      
 	%	urlcolor=blue,
 	%}
-\usepackage[top=1.0in, left=1.0in, right=1.0in, bottom=1.0in]{geometry}
+\usepackage[top=1.0in, left=0.5in, right=0.5in, bottom=1.0in]{geometry}
 %\usepackage{setspace}
 %\setstretch{1.1}
 %\pagestyle{empty}
@@ -20,25 +21,128 @@
 %\usepackage{subfig}
 \usepackage{caption}
 \usepackage{subcaption}
-\title{Two-point correlation function comparison}
+\title{}
 
 \begin{document}
-	\maketitle
 
-Halo exclusion effect scale = $1.1127$ MPc for z = 3.0 halos\\
-Halo exclusion effect scale = $2.8827$ MPc for z = 0.3 halos\\
+{\centering \bf \Large Cross correlation calculations }\\ 
 
 \begin{equation}
 	\label{ratio}
 	 \frac{\sqrt{\xi_{hh}(M1)\xi_{hh}(M2)}}{\xi_{hh}(M1,M2)}
 \end{equation}
 
+exlusion scale = virial\_radius(max(mass\_bin1)) + virial\_radius(max(mass\_bin2))
+
+\begin{multicols}{2}
+\begin{center}
+\begin{tabular}{ |c|c|} 
+\hline
+\multicolumn{2}{|c|}{z = 3.0, boxsize = 7500 MPc}\\
+ \hline
+ Mass bin & Num of halos \\ 
+ \hline
+ $2.2 \times 10^{12}$ - $2.4 \times 10^{12}$ & 40146291 \\ 
+ $1.0 \times 10^{13}$ - $2.0 \times 10^{13}$ & 1658434 \\
+ $1.0 \times 10^{13}$ - $1.0 \times 10^{14}$ & 1834865 \\  
+  $4.0 \times 10^{13}$ - $1.0 \times 10^{14}$ & 9080 \\ 
+ \hline
+\end{tabular}
+\end{center}
+\columnbreak
+\begin{center}
+\begin{tabular}{ |c|c|} 
+\hline
+\multicolumn{2}{|c|}{z = 0.1, boxsize = 7500 MPc}\\
+ \hline
+ Mass bin & Num of halos \\ 
+ \hline
+ $2.2 \times 10^{12}$ - $2.4 \times 10^{12}$ & 76584697 \\ 
+ $1.0 \times 10^{13}$ - $2.0 \times 10^{13}$ & 102166254 \\ 
+  $8.0 \times 10^{13}$ - $1.0 \times 10^{14}$ & 3719498 \\ 
+  $1.0 \times 10^{14}$ - $5.0 \times 10^{14}$ & 10165943 \\ 
+ \hline
+\end{tabular}
+\end{center}
+\end{multicols}
+
+
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z3.0/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_1E+13-2E+13_.png}
+    \caption{z = 3.0}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z3.0/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_4E+13-1E+14_.png}
+    \caption{z = 3.0}
+\end{subfigure}
+
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z3.0/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_1E+13-1E+14_.png}
+    \caption{z = 3.0}
+\end{subfigure}
+
+\end{figure}
+
+\begin{figure}[b]
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z0.1/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_1E+13-2E+13_.png}
+        \caption{z = 0.1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z0.1/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_8E+13-1E+14_.png}
+    \caption{z = 0.1}
+\end{subfigure}
+
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z0.1/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_1E+14-5E+14_.png}
+    \caption{z = 0.1}
+\end{subfigure}
+%\caption[short]{A beautiful, well written caption}
+\end{figure}
+
+
+
+
+
+\end{document}
+
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=10cm]{abacus_cosmos/AbacusCosmos_1100box_planck_00-0_FoF_halos/z0.300/ratio_plots/corr_ratio_1E+12-1.5E+12_3E+13-2E+15_.png}
-	\caption{Redshift 0.3}
+	\includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z3.0/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_1E+13-2E+13_.png}
+	\caption{Redshift 3.0, }
 	\label{fig:ratio}
 \end{figure}
 
-\end{document}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z3.0/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_4E+13-1E+14_.png}
+	\caption{Redshift 3.0, }
+	\label{fig:ratio}
+\end{figure}
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z0.1/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_1E+13-2E+13_.png}
+	\caption{Redshift 0.1, }
+	\label{fig:ratio}
+\end{figure}
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{/home/darkmatter/vipul/bias_calc/z0.1/huge/ratio_plots/corr_ratio_2.2E+12-2.4E+12_8E+13-1E+14_.png}
+	\caption{Redshift 0.1, }
+	\label{fig:ratio}
+\end{figure}
+
 
